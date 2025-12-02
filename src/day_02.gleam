@@ -56,5 +56,53 @@ fn part_a(lines: List(String)) -> Int {
 }
 
 fn part_b(lines: List(String)) -> Int {
-  0
+  lines
+  |> list.fold(0, fn(sum, curr_range) {
+    let range_bounds =
+      curr_range
+      |> string.split_once("-")
+      |> result.lazy_unwrap(fn() { panic as "Failed to parse range" })
+
+    // here have to map over IDs from low to high
+    let range_invalid_id_sum =
+      list.range(
+        int.parse(range_bounds.0)
+          |> result.lazy_unwrap(fn() { panic as "not an int" }),
+        int.parse(range_bounds.1)
+          |> result.lazy_unwrap(fn() { panic as "not an int" }),
+      )
+      |> list.map(fn(id) {
+        let id_str = int.to_string(id)
+        // TODO: inelegant/brute force soln here is to simply do this split
+        // operation for every evenly-divisible value of number of digits. e.g. in
+        // an 8 digit num, split in half, then in quarters, then 8ths. 9 digit
+        // num, split in thirds and 9ths, etc
+        let id_len = string.length(id_str)
+        list.range(1, id_len / 2)
+        |> list.map(fn(divisor) {
+          case id_len % divisor == 0 {
+            True -> {
+              let substrings = util.split_n(id_str, divisor)
+              let first = substrings |> list.first() |> result.unwrap("")
+              case substrings |> list.all(fn(x) { x == first }) {
+                True -> {
+                  id
+                }
+                False -> {
+                  0
+                }
+              }
+            }
+            False -> {
+              0
+            }
+          }
+        })
+        |> list.unique()
+      })
+      |> list.flatten()
+      |> int.sum()
+
+    sum + range_invalid_id_sum
+  })
 }

@@ -1,13 +1,12 @@
 import gleeunit
+import util
 
 pub fn main() -> Nil {
   gleeunit.main()
 }
 
-// gleeunit test functions end in `_test`
-pub fn hello_world_test() {
-  let name = "Joe"
-  let greeting = "Hello, " <> name <> "!"
-
-  assert greeting == "Hello, Joe!"
+pub fn split_n_test() {
+  assert util.split_n("foobarbaz", 3) == ["foo", "bar", "baz"]
+  assert util.split_n("foobarba", 3) == ["foo", "bar", "ba"]
+  assert util.split_n("foo", 4) == ["foo"]
 }
