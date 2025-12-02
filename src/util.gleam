@@ -10,3 +10,12 @@ pub fn read_file_lines(path: String) -> List(String) {
   |> string.split(on: "\n")
   |> list.filter(fn(line) { !string.is_empty(line) })
 }
+
+pub fn read_file_comma_delim(path: String) -> List(String) {
+  simplifile.read(from: path)
+  |> result.unwrap("")
+  // error handling is for losers in AOC
+  |> string.split(on: ",")
+  |> list.filter(fn(line) { !string.is_empty(line) })
+  |> list.map(string.trim)
+}
