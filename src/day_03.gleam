@@ -33,7 +33,40 @@ fn part_a(lines: List(String)) -> Int {
 }
 
 fn part_b(lines: List(String)) -> Int {
-  0
+  // this is the same thing but instead of excluding the last 1 we exclude 12, 11, etc
+  parse(lines)
+  |> list.map(fn(bank) {
+  let m1 = find_max(bank, 11)
+  let m2 = find_max(m1.remainder, 10)
+  let m3 = find_max(m2.remainder, 9)
+  let m4 = find_max(m3.remainder, 8)
+  let m5 = find_max(m4.remainder, 7)
+  let m6 = find_max(m5.remainder, 6)
+  let m7 = find_max(m6.remainder, 5)
+  let m8 = find_max(m7.remainder, 4)
+  let m9 = find_max(m8.remainder, 3)
+  let m10 = find_max(m9.remainder, 2)
+  let m11 = find_max(m10.remainder, 1)
+  let m12 = find_max(m11.remainder, 0)
+
+    let s1 = int.to_string(m1.max_val)
+    let s2 = int.to_string(m2.max_val)
+    let s3 = int.to_string(m3.max_val)
+    let s4 = int.to_string(m4.max_val)
+    let s5 = int.to_string(m5.max_val)
+    let s6 = int.to_string(m6.max_val)
+    let s7 = int.to_string(m7.max_val)
+    let s8 = int.to_string(m8.max_val)
+    let s9 = int.to_string(m9.max_val)
+    let s10 = int.to_string(m10.max_val)
+    let s11 = int.to_string(m11.max_val)
+    let s12 = int.to_string(m12.max_val)
+
+    let val_str = s1 <> s2 <> s3 <> s4 <> s5 <> s6 <> s7 <> s8 <> s9 <> s10 <> s11 <> s12
+    let assert Ok(largest) = int.parse(val_str)
+    largest
+  })
+  |> int.sum
 }
 
 fn parse(lines: List(String)) -> List(List(Int)) {
