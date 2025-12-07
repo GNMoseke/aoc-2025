@@ -1,4 +1,5 @@
 // graph problem
+import gleam/int
 import gleam/list
 import gleam/set
 import gleam/string
@@ -37,7 +38,55 @@ fn part_a(grid: set.Set(#(Int, Int))) -> Int {
 }
 
 fn part_b(grid: set.Set(#(Int, Int))) -> Int {
-  0
+  // for this it's basically now just recurse into the new state of the grid and do the
+  // same as in part a on each recursion
+  remove_valid_rolls(0, grid, []).2 |> int.sum
+}
+
+fn remove_valid_rolls(
+  prev_ct: Int,
+  grid: set.Set(#(Int, Int)),
+  accumulated_counts: List(Int),
+) -> #(Int, set.Set(#(Int, Int)), List(Int)) {
+  let original_grid_len = set.size(grid)
+
+  let new_grid =
+    grid
+    |> set.map(fn(pos) {
+      let #(x, y) = pos
+      let check_range = list.range(-1, 1)
+      let above =
+        check_range
+        |> list.map(fn(offset) { grid |> set.contains(#(x - 1, y + offset)) })
+      let inline =
+        check_range
+        |> list.map(fn(offset) { grid |> set.contains(#(x, y + offset)) })
+      let below =
+        check_range
+        |> list.map(fn(offset) { grid |> set.contains(#(x + 1, y + offset)) })
+
+      let surround_count =
+        list.append(list.append(above, inline), below)
+        |> list.filter(fn(has_roll) { has_roll == True })
+        |> list.length()
+
+      case surround_count - 1 < 4 {
+        False -> pos
+        True -> #(-1, -1)
+      }
+    })
+    |> set.filter(fn(pos) { pos != #(-1, -1) })
+
+  let removed_roll_count = original_grid_len - set.size(new_grid)
+  case removed_roll_count == 0 {
+    True -> #(0, grid, accumulated_counts)
+    False ->
+      remove_valid_rolls(
+        prev_ct + removed_roll_count,
+        new_grid,
+        list.append([removed_roll_count], accumulated_counts),
+      )
+  }
 }
 
 fn parse(lines: List(String)) -> set.Set(#(Int, Int)) {
